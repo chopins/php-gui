@@ -11,14 +11,10 @@
 
 namespace Toknot\Gui\Control;
 
-class Window
+class Window extends Control
 {
     public $title;
     public $icon;
     public $width;
     public $heigth;
-
-    public function __construct()
-    {
-    }
 }

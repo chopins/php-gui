@@ -13,8 +13,9 @@ namespace Toknot\Gui;
 
 class Gtk
 {
+    protected $cffi;
     public function __construct(CFFI $cffi)
     {
-        
+        $this->cffi = $cffi;
     }
 }

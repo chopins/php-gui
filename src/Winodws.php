@@ -10,6 +10,7 @@
  */
 
 namespace Toknot\Gui;
+use FFI;
 
 class Windows
 {
@@ -30,6 +31,7 @@ class Windows
     const SW_MAX = 11;
     const GCLP_HICON = -14;
     const GCLP_HICONSM = -34;
+    const COLOR_BTNFACE = 15;
 
     const WS_OVERLAPPED = 0x00000000;
     const WS_CAPTION = 0x00C00000;
@@ -47,7 +49,27 @@ class Windows
         $this->cffi = $cffi;
     }
 
-    protected function windowsCreateControl($dwExStyle, $type, $text, $dwStyle)
+    public function init()
+    {
+        $wc = $this->cffi->cfn('new', 'WNDCLASSEXA', false, true);
+        $wc->lpszClassName = 'php_gui_windowsClass';
+        $wc->lpfnWndProc = $windowWndProc;
+        $wc->hInstance = $Instance;
+        $wc->hIcon = $hDefaultIcon;
+        $wc->hCursor = $hDefaultCursor;
+        $wc->hbrBackground = $this->cffi->cast('HBRUSH', self::COLOR_BTNFACE + 1);
+        $wc->lpszMenuName = 0;
+        $wc->lpszClassName = 0;
+        $wc->hIconSm = 0;
+        $this->cffi->RegisterClassExA(FFI::addr($wc));
+    }
+
+    public function newWindows()
+    {
+        $this->windowsCreateControl(0,);
+    }
+
+    protected function windowsCreateControl($dwExStyle, $type, $text, $dwStyle, $utilWindow, $hInstance, $lpParam)
     {
         return $this->cffi->CreateWindowExW(
             $dwExStyle,

@@ -31,7 +31,6 @@ class CFFI
                 default => $this->gtk($gtklib),
             };
         }
-
     }
 
     public static function new()
@@ -43,15 +42,33 @@ class CFFI
         return self::$cffi;
     }
 
+    public function toVoidPtr($type, $v, $owned = true, $persistent = false)
+    {
+        $v = self::$ffi->new($type, $owned, $persistent);
+        $v->cdata = $v;
+        $a = self::$ffi->cast('void*', FFI::addr($v));
+        return $a;
+    }
+
+    public function cfn($name, ...$arguments)
+    {
+        return self::$ffi->$name(...$arguments);
+    }
+
     private function loadHeader($file)
     {
         return file_get_contents(__DIR__ . "/include/$file");
     }
 
+    public function api()
+    {
+        return $this->apiobj;
+    }
+
     public function __call($name, $arguments)
     {
         $arguments = array_values($arguments);
-        return self::$ffi->$name(...$arguments);
+        return $this->apiobj->$name(...$arguments);
     }
     public function __set($name, $value)
     {
@@ -71,7 +88,7 @@ class CFFI
         } else {
             $type = 'typedef int INT_PTR;typedef long LONG_PTR;typedef unsigned int UINT_PTR;typedef unsigned long ULONG_PTR;';
         }
-        
+
         $this->define($header, 'WINAPI', '__stdcall');
         self::$ffi = FFI::cdef($type . $header, $lib);
         $this->apiobj = new Windows($this);

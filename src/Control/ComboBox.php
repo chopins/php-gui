@@ -11,15 +11,6 @@
 
 namespace Toknot\Gui\Control;
 
-use Toknot\Gui\CFFI;
-
-class Control
-{
-    protected $cffi;
-    public function __construct($options = [], CFFI $cffi = null)
-    {
-        if (!$cffi) {
-            $this->cffi = CFFI::new();
-        }
-    }
+class ComboBox extends Control {
+    
 }
